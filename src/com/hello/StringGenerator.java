@@ -13,7 +13,7 @@ import backtype.storm.tuple.Values;
 public class StringGenerator extends BaseRichSpout {
 
 	SpoutOutputCollector myCollector;
-	String[] greats = {"linus", "rms","stevejobs","stroustrup","jamesgosling",""};
+	String[] greats = {"linus", "rms","stevejobs","stroustrup","jamesgosling","denniseritchie"};
 	
 	@Override
 	public void nextTuple() {
