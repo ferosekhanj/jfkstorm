@@ -12,6 +12,7 @@ public class PrintBolt extends BaseBasicBolt {
 		// TODO Auto-generated method stub
 		String great = arg0.getStringByField("great");
 		System.out.println("Name of a great "+great);
+		
 	}
 
 	@Override

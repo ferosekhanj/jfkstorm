@@ -13,7 +13,7 @@ public class SimpleTopology {
 		TopologyBuilder tb = new TopologyBuilder();
 		
 		tb.setSpout("stringGenerator", new StringGenerator(), 2);
-		tb.setBolt("printbolt", new PrintBolt(),4).shuffleGrouping("stringGenerator");
+		tb.setBolt("countbolt", new CountRedis(),4).shuffleGrouping("stringGenerator");
 		
 		Config c = new Config();
 		c.setDebug(true);
