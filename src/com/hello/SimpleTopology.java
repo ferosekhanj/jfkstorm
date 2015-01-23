@@ -1,6 +1,7 @@
 package com.hello;
 
 import backtype.storm.Config;
+import backtype.storm.StormSubmitter;
 import backtype.storm.LocalCluster;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
@@ -8,25 +9,31 @@ import backtype.storm.topology.TopologyBuilder;
 
 public class SimpleTopology {
 
-	public static void main(String[] args) throws AlreadyAliveException, InvalidTopologyException{
+    public static void main(String[] args) throws AlreadyAliveException, InvalidTopologyException,InterruptedException{
 		
 		TopologyBuilder tb = new TopologyBuilder();
 		
-		tb.setSpout("stringGenerator", new StringGenerator(), 2);
-		tb.setBolt("countbolt", new CountRedis(),4).shuffleGrouping("stringGenerator");
+		CountRedis.createJedis(args[1]);
+		tb.setSpout("stringGenerator", new StringGenerator(), 6);
+		tb.setBolt("countbolt", new CountRedis(),12).shuffleGrouping("stringGenerator");
 		
 		Config c = new Config();
 		c.setDebug(true);
 		
-		LocalCluster cluster = new LocalCluster();
-		cluster.submitTopology("simpleTopolgy", c, tb.createTopology());
-		
-		try{
-			Thread.sleep(10000);
-		}catch(InterruptedException ie){
-			System.out.println("Stopping the cluster");
+		if (args != null && args.length > 0) {
+		    c.setNumWorkers(4);
+
+		    StormSubmitter.submitTopologyWithProgressBar(args[0], c, tb.createTopology());
 		}
-		cluster.killTopology("simpleTopology");
-		cluster.shutdown();
+		else {
+		    c.setMaxTaskParallelism(3);
+
+		    LocalCluster cluster = new LocalCluster();
+		    cluster.submitTopology("simple-topology", c, tb.createTopology());
+
+		    Thread.sleep(10000);
+
+		    cluster.shutdown();
+		}
 	}
 }

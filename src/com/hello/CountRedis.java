@@ -13,9 +13,13 @@ import redis.clients.jedis.*;
 
 public class CountRedis extends BaseRichBolt {
 	
-	static JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
-	
-	public CountRedis() {
+    static JedisPool pool = new JedisPool(new JedisPoolConfig(),"104.41.146.23");
+        
+	public static void createJedis(String host) {
+
+	    if( pool == null)
+		pool = new JedisPool(new JedisPoolConfig(),host);
+
 	}
 	
 	@Override
@@ -23,7 +27,7 @@ public class CountRedis extends BaseRichBolt {
 		// TODO Auto-generated method stub
 		try (Jedis jedis = pool.getResource()) {
 			String great = arg0.getStringByField("great");
-			System.out.println(great);
+			jedis.incr(great);
 			jedis.incr("processed");
 		}		
 	}
